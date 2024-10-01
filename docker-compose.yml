@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  postgres-db:
+    image: postgres:15.0
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5532:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - postgres-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com  # Default email to log into pgAdmin
+      PGADMIN_DEFAULT_PASSWORD: admin         # Default password for pgAdmin
+    ports:
+      - "8000:80"  # Exposes pgAdmin on port 8080
+    depends_on:
+      - postgres-db  # Ensure PostgreSQL is up before pgAdmin
+    networks:
+      - postgres-network
+
+volumes:
+  pgdata:
+
+networks:
+  postgres-network:
+    driver: bridge
